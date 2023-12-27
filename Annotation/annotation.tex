@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{Papers AML - Semantic segmentation and Real-time Semantic}
+\author{Alessia Intini, Antonio Iorio, Giuseppe Scarso}
+\date{December 2023}
+\usepackage[a4paper,top=1cm,bottom=1cm,left=1.2cm,right=0.8cm]{geometry}
+
+\begin{document}
+
+    \maketitle
+
+    \section{A Brief Survey on Semantic Segmentation with Deep Learning (First paper)}
+        \subsection{Alessia Intini}
+            \subparagraph{Semantic segmentation assigns a category label to each pixel of an image, which is a fundamental but challenging task in computer vision research. As semantic segmentation is able to provide the category informa-
+                tion at the pixel level.
+                There are some commonly deep architectures used in semantic segmentation
+            }
+            \begin{itemize}
+                \item VGG
+            \end{itemize}
+            \subparagraph{The key contribution of the VGG networks is that they paved the way to design deeper structures for better performance. VGG has been adopted as the backbone of several semantic segmentation models}
+            \begin{itemize}
+                \item ResNet
+            \end{itemize}
+            \begin{itemize}
+                \item DenseNet
+            \end{itemize}
+            \begin{itemize}
+                \item ResNeXt
+            \end{itemize}
+            \begin{itemize}
+                \item MobileNet
+            \end{itemize}
+
+        \subsection{Antonio Iorio}
+        Semantic segmentation assigns a predefined category label to each pixel of an image.
+        Its main task is in self-driving vehicles where for example pedestrian or defect 
+        should be identified. The paper analyzes:
+        \begin{enumerate}
+            \item supervision degree during the training process
+            \item focus on real-time segmentation
+            \item potentially valuable research points raised very recently 
+        \end{enumerate}
+        Semantic segmentation tries to identify some main areas within the original image.
+        Popular semantic segmentation datasets are:
+        \begin{itemize}
+            \item ADE20K
+            \item Cityscapes: images from 50 different European cities
+            \item CamVid: video sequences of driving scenes
+            \item NYUDv2: indoor images
+            \item differen PASCAL version:
+            \begin{itemize}
+                \item PASCAL VOC 2012
+                \item PASCAL Context
+                \item PASCAL Part
+            \end{itemize}
+            \item SUNRGBD
+            \item SYNTHIA
+        \end{itemize}
+        To analyze the performance of a neural network, there are two perspectives:
+        \begin{itemize}
+            \item Accuracy: to eval it, there is:
+            \begin{itemize}
+                \item Pixel Accuracy (PA): given by ratio between number of correctly
+                    classified pixels and the total number
+                \item Mean Pixel Accuracy (MPA)
+                \item Intersection over Union (IoU)
+                \item Mean Intersection Over Union (MIoU)
+                \item Frequency-Weighted Intersection over Union (FWIoU)
+            \end{itemize}
+            \item Efficiency: to eval it, there is:
+            \begin{itemize}
+                \item Model complexity: it uses model parameters and FLOPs
+                \item Implementation speed
+            \end{itemize}
+            These two metrics depend from hardware and software environment
+        \end{itemize}
+
+    \section{BiSeNet - Second Paper}
+        \subsection{BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation (Paper A)}    
+            \subsubsection{Alessia Intini}
+            \subsubsection{Real-time semantic segmentation}
+            \subsubsection{Bilateral segmentation network}
+                \begin{itemize}
+                    \item Spatial path
+                \end{itemize}
+                \subparagraph{We propose a Spatial Path to preserve the spatial size of the original input image and encode affluent spatial information. The Spa- tial Path contains three layers. Each layer includes a convolution with stride = 2, followed by batch normalization [15] and ReLU [11]. Therefore, this path extracts the output feature maps that is 1/8 of the original image. It encodes rich spatial information due to the large spatial size of feature maps. }
+                    \begin{itemize}
+                        \item Context path
+                    \end{itemize}
+
+            \subsubsection{Antonio Iorio}
+            Semantic segmantation is widely used for autonomous driving systems, 
+            consequently needing to have a efficient inference speed for fast response. So to 
+            accelerate the model there are three approaches:
+            \begin{enumerate}
+                \item restrict input size
+                \item prune channels of the network to boost the inferene speed
+                \item drop the last stage of the model
+            \end{enumerate}
+            But all this solution compromise the accuracy to speed, so one solution to 
+            not remove spatial detail is the \textbf{U-shape}, it gradually increases the
+            spatial resolution and fill some missing details. But it has two weaknesses,
+            the first it could introduce an extra computation and the second, if it lose 
+            some spatial information, it is difficult to recover.
+            So we can introduce the Bilateral Segmentation Network, it has two component:
+            \begin{itemize}
+                \item Spatial Path: it consists in 3 convolution layers so to obtain the
+                    1/8 feature map. Every convolution use a stride = 2 and apply batch normalization
+                    and ReLU
+                \item Context Path: it puts a global average pooling at the end of Xception
+            \end{itemize}
+            To increase accuracy without loss of speed we can use Feature Fusion Module (FFM) and
+            Attention Refinement Module (ARM).
+            Datasets used by BiSeNet are Cityscapes, CamVid and COCO-Stuff
+
+        \subsection{Rethinking BiSeNet For Real-time Semantic Segmentation (Paper B)}
+            \subsubsection{Alessia Intini}
+
+            \subsubsection{Antonio Iorio}
+            This paper suggests an evolotion of BiSeNet, where it uses a Short-Term Dense
+            Concatenate newtork (STDC network) so as to remove redundancy. To do this, it merges
+            two operation: Low-level features and deep features.
+            The STDC module gives the possibility to extract deep features with scalable receptive
+            field and multi scale information.
+            To create an efficient real-time semantic segmentation there are two main methods:
+            \begin{enumerate}
+                \item lightweight backbone: introduce a cross-level feature aggregation to enhance performance
+                \item multi-branch architecture: to achieve good speed-accuracy
+            \end{enumerate}
+            Each module of STDC is separeted into several blocks, every block has a ConvXi. 
+            ConvX includes one convolutional layer, batch normalization and ReLU.
+            The kernel of first block is 1, instead in the other is 3.
+            At the end of ConvX there is one global average pooling and two fully connected layer.
+
+    \section{A Review of Single-Source Deep Unsupervised Visual Domain Adaptation - (Third Paper)}
+    
+
+\end{document}
