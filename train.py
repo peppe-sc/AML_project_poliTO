@@ -274,7 +274,7 @@ def main():
         print('training on GTA5')
         cropsize = (720,1280)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        train_dataset_big = GTA5(root = Path(""), transforms=transformations)
+        train_dataset_big = GTA5(root = Path("./content"), transforms=transformations)
         indexes = range(0, len(train_dataset_big))
         print(train_dataset_big)
         splitting = train_test_split(indexes, train_size = 0.75, random_state = 42, shuffle = True)
