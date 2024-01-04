@@ -289,7 +289,7 @@ def main():
         train_dataset = GTA5(root = Path(""), transforms=transformations)
         cropsize = (512,1024)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        val_dataset = CityScapes(root= "./Cityscapes/Cityspaces", split='val',transforms=transformations) 
+        val_dataset = CityScapes(root= "/content/Cityscapes/Cityspaces", split='val',transforms=transformations) 
     
     dataloader_train = DataLoader(train_dataset,
                     batch_size=args.batch_size,
