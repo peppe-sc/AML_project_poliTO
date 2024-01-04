@@ -286,7 +286,7 @@ def main():
         print('training on CROSS_DOMAIN, training on GTA5 and validating on CityScapes')
         cropsize = (720,1280)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        train_dataset = GTA5(root = Path(""), transforms=transformations)
+        train_dataset = GTA5(root = Path("/content"), transforms=transformations)
         cropsize = (512,1024)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
         val_dataset = CityScapes(root= "/content/Cityscapes/Cityspaces", split='val',transforms=transformations) 
