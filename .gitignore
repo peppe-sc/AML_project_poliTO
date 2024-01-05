@@ -10,6 +10,7 @@
 /checkpoints/best*
 /checkpoints/Cityscapes
 /checkpoints/GTA5
+/checkpoints/Cross-Domain
 
 /model/__pycache__
 /__pycache__
