@@ -60,6 +60,14 @@ def val(args, model, dataloader, writer = None , epoch = None, step = None):
                 writer.add_image('eval%d/iter%d/correct_eval_labels' % (epoch, i), np.array(colorized_labels), step, dataformats='HWC')
                 writer.add_image('eval%d/iter%d/eval_original _data' % (epoch, i), np.array(data[0].cpu(),dtype='uint8'), step, dataformats='CHW')
 
+                colorized_predictions.save("/content/results/img"+str(i)+".png")
+                colorized_labels.save("/content/results/lbl"+str(i)+".png")
+
+                #import matplotlib.pyplot as plt
+                #plt.imshow("/content/results/img"+str(i)+".png")
+                #plt.imshow("/content/results/lbl"+str(i)+".png")
+
+
             predict = predict.squeeze(0)
             predict = reverse_one_hot(predict)
             predict = np.array(predict.cpu())
@@ -245,10 +253,10 @@ def parse_args():
                        type=str,
                        default='',
                        help='Optional comment to add to the model name and to the log.')
-    #parse.add_argument('--resume',
-    #                   type=bool,
-    #                   default=False,
-    #                   help='Select if you want to resume from the last checkpoint')
+    parse.add_argument('--augmentation',
+                       type=str2bool,
+                       default=False,
+                       help='Select if you want to perform some data augmentation')
     return parse.parse_args()
 
 
@@ -258,8 +266,8 @@ def main():
     ## dataset
     n_classes = args.num_classes
     args.dataset = args.dataset.upper()
- 
-    eval_transformations = ExtCompose([ExtScale(0.5,interpolation=Image.Resampling.BICUBIC), ExtToTensor()])
+    
+    
     print(args.dataset)
     print("Dim batch_size")
     print(args.batch_size)
@@ -267,16 +275,24 @@ def main():
         print('training on CityScapes')
         cropsize = (512,1024)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
+        
         train_dataset = CityScapes(root = "./Cityscapes/Cityspaces", split = 'train',transforms=transformations)
         val_dataset = CityScapes(root= "./Cityscapes/Cityspaces", split='val',transforms=transformations)#eval_transformations)
 
     elif args.dataset == 'GTA5':
         print('training on GTA5')
         cropsize = (720,1280)
-        transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        train_dataset_big = GTA5(root = Path(""), transforms=transformations)
+        #eval_transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
+        if args.augmentation:
+            print("Performing data augmentation")
+            transformations = ExtCompose([ExtRandomCrop(cropsize), ExtRandomHorizontalFlip(), ExtToTensor()])
+            train_dataset_big = GTA5(root = Path("/content"), transforms=transformations)
+        else: 
+            transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
+            train_dataset_big = GTA5(root = Path("/content"), transforms=transformations)
+        
         indexes = range(0, len(train_dataset_big))
-        print(train_dataset_big)
+        
         splitting = train_test_split(indexes, train_size = 0.75, random_state = 42, shuffle = True)
         train_indexes = splitting[0]
         val_indexes = splitting[1]
@@ -286,10 +302,10 @@ def main():
         print('training on CROSS_DOMAIN, training on GTA5 and validating on CityScapes')
         cropsize = (720,1280)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        train_dataset = GTA5(root = Path(""), transforms=transformations)
+        train_dataset = GTA5(root = Path("/content"), transforms=transformations)
         cropsize = (512,1024)
         transformations = ExtCompose([ExtResize(cropsize), ExtToTensor()])
-        val_dataset = CityScapes(root= "./Cityscapes/Cityspaces", split='val',transforms=transformations) 
+        val_dataset = CityScapes(root= "/content/Cityscapes/Cityspaces", split='val',transforms=transformations) 
     
     dataloader_train = DataLoader(train_dataset,
                     batch_size=args.batch_size,
@@ -339,6 +355,7 @@ def main():
             checkpoint = torch.load(pretrain_path)
             model.module.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            print("Loaded latest checkpoint")
 
 
     

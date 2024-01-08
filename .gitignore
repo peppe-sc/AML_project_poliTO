@@ -13,6 +13,8 @@
 /checkpoints/Cross-Domain
 /checkpoints/Data-Augmentation
 
+/runs/
+
 /model/__pycache__
 /__pycache__
 
